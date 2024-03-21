@@ -10,7 +10,9 @@ public class MainManager : MonoBehaviour
 
     public Brick BrickPrefab;
     public int LineCount = 6;
+    public int BestScore;
     public Rigidbody Ball;
+    public string PlayerName;
 
     public Text BestScoreText;
     public Text ScoreText;
@@ -19,12 +21,12 @@ public class MainManager : MonoBehaviour
     
     private bool m_Started = false;
     private int m_Points;
-    private int m_BestScore;
     
     private bool m_GameOver = false;
 
     private void Awake()
     {
+        
         if (instance != null)
         {
             Destroy(instance);
@@ -41,7 +43,7 @@ public class MainManager : MonoBehaviour
     {
         if (SceneManager.GetActiveScene().buildIndex == 1)
         {
-
+            DataManager.instance.LoadBestScoreData();
             const float step = 0.6f;
             int perLine = Mathf.FloorToInt(4.0f / step);
 
@@ -80,13 +82,14 @@ public class MainManager : MonoBehaviour
         }
         else if (m_GameOver)
         {
-            CheckPoints(m_Points);
+            CheckBestScore(m_Points, PlayerName);
             UpdateBestScore();
             
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                DataManager.instance.LoadBestScoreData();
             }
         }
     }
@@ -103,19 +106,20 @@ public class MainManager : MonoBehaviour
         m_GameOver = true;
         GameOverText.SetActive(true);
         MenuButton.SetActive(true);
+        DataManager.instance.SaveBestScoreData();
     }
 
     private void UpdateBestScore()
     {
-        BestScoreText.text = "Best Score: " + DataManager.instance.playerName + " " + m_BestScore;
+        BestScoreText.text = "Best Score: " + PlayerName + " " + BestScore;
     }
 
-    private void CheckPoints(int p_Points)
+    private void CheckBestScore(int p_Points, string p_playerName)
     {
-        if (m_BestScore < p_Points)
+        if (BestScore < p_Points)
         {
-            m_BestScore = p_Points;
-            Debug.Log(p_Points);
+            BestScore = p_Points;
+            PlayerName = DataManager.instance.playerName;
         }
     }
 

@@ -37,31 +37,34 @@ public class DataManager : MonoBehaviour
     }
 
     [System.Serializable]
-    class SaveData
+    class BestScoreData
     {
         public string dataPlayerName;
+        public int dataBestScore;
     }
 
-    public void SaveName()
+    public void SaveBestScoreData()
     {
-        SaveData data = new SaveData();
+        BestScoreData data = new BestScoreData();
         data.dataPlayerName = DataManager.instance.playerName;
+        data.dataBestScore = MainManager.instance.BestScore;
 
         string json = JsonUtility.ToJson(data);
 
         File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
     }
 
-    public void LoadColor()
+    public void LoadBestScoreData()
     {
         string path = Application.persistentDataPath + "/savefile.json";
         
         if (File.Exists(path))
         {
             string json = File.ReadAllText(path);
-            SaveData data = JsonUtility.FromJson<SaveData>(json);
+            BestScoreData data = JsonUtility.FromJson<BestScoreData>(json);
             
             DataManager.instance.playerName = data.dataPlayerName;
+            MainManager.instance.BestScore = data.dataBestScore;
         }
     }
 
